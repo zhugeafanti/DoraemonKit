@@ -153,7 +153,7 @@ class _KitPage extends State<KitPage> {
           Container(width: width, height: 12, color: const Color(0xfff5f6f7)));
 
       widgets.add(Container(
-        margin: const EdgeInsets.only(left: 10, right: 10, top: 15, bottom: 10),
+        margin: const EdgeInsets.only(left: 10, right: 10),
         child: Container(
           alignment: Alignment.center,
           child: Column(
@@ -185,6 +185,10 @@ class _KitPage extends State<KitPage> {
         ),
       ));
     }
+
+    // 增加bottom占位
+    widgets.add(Container(width: width, height: 12, color: const Color(0xfff5f6f7)));
+    
     final wrap = Wrap(
       spacing: 0,
       runSpacing: 15,
@@ -198,39 +202,15 @@ class _KitPage extends State<KitPage> {
     final double round = (MediaQuery.of(context).size.width - 80 * 4 - 30) / 3;
     BizKitManager.instance.kitGroupMap[key]!.forEach((IKit value) {
       widgets.add(
-        Draggable(
-          child: MaterialButton(
-              child: KitItem(value),
-              onPressed: () {
-                setState(() {
-                  value.tabAction();
-                });
-              },
-              padding: const EdgeInsets.all(0),
-              minWidth: 40),
-          feedback: KitItem(value),
-          onDragStarted: () {
-            setState(() {
-              onDrag = true;
-            });
-          },
-          onDraggableCanceled: (Velocity velocity, Offset offset) {
-            setState(() {
-              onDrag = false;
-              if (!inResidentContainerEdge(offset)) {
-                KitPageManager.instance.removeResidentKit(key);
-              }
-            });
-          },
-          onDragEnd: (DraggableDetails detail) {
-            setState(() {
-              onDrag = false;
-              if (!inResidentContainerEdge(detail.offset)) {
-                KitPageManager.instance.removeResidentKit(key);
-              }
-            });
-          },
-        ),
+        MaterialButton(
+            child: KitItem(value),
+            onPressed: () {
+              setState(() {
+                value.tabAction();
+              });
+            },
+            padding: const EdgeInsets.all(0),
+            minWidth: 40),
       );
     });
     final wrap = Wrap(
