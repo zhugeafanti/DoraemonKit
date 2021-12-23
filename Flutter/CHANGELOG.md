@@ -1,3 +1,5 @@
+## [0.8.1-nullsafety.1.rlab] - (内部版)支持useRunZoned开关，选择性控制是否使用dokit中的runZonedGuarded，不强制使用dokit中的zone，避免和自己的zone冲
+## [0.8.1-nullsafety.0.rlab] - (内部版)支持在主面板添加自定义入口kit;增加悬浮按钮点击事件回调能力 
 ## [0.8.1-nullsafety.0] - 支持在主面板添加自定义入口kit;增加悬浮按钮点击事件回调能力
 ## [0.8.0-nullsafety.0] - 支持Flutter2.0，支持nullsafety
 ## [0.6.0] - 增加widget层级、颜色拾取、查看页面源码、页面启动耗时以及对齐标尺等功能
