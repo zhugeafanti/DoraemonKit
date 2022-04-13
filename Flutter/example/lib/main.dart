@@ -13,7 +13,6 @@ import 'package:dio/dio.dart';
 import 'package:dokit/dokit.dart';
 import 'package:dokit/kit/apm/leaks/leaks_doctor_observer.dart';
 import 'package:dokit/kit/apm/vm/vm_helper.dart';
-import 'package:dokit/kit/biz/biz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -79,14 +78,19 @@ void main() {
       kitBuilder: () => BizKitTestPage());
 
   var bizKit0 = DoKit.i.newBizKit(name: '1111', group: '业务专区2');
-  DoKit.i.addKit(kit: bizKit0);
+  DoKit.i.addKit(kit: bizKit0!);
 
   var bizKit1 = DoKit.i.newBizKit(name: '2222', group: '业务专区3');
   var bizKit2 = DoKit.i.newBizKit(name: '3333', group: '业务专区3');
   var bizKit3 = DoKit.i.newBizKit(name: '4444', group: '业务专区3');
-  DoKit.i.addBizKits([bizKit1, bizKit2, bizKit3]);
+  DoKit.i.addBizKits([bizKit1!, bizKit2!, bizKit3!]);
 
   // DoKit.i.addKit({kit: BizKit(name: '1111', group: '业务专区2')});
+  DoKit.i.listenLeaksData((info) => {
+    if (info != null) {
+      print(info.toString())
+    }
+  });
 }
 
 /// ===自定义BizKit Test===
@@ -359,12 +363,12 @@ class _DoKitTestPageState extends State<DoKitTestPage> {
     );
   }
 
-  Timer timer;
+  Timer? timer;
 
   void testDownload() async {
     String url =
         'https://pt-starfile.didistatic.com/static/starfile/node20210220/895f1e95e30aba5dd56d6f2ccf768b57/GjzGU0Pvv11613804530384.zip';
-    String savePath = await getPhoneLocalPath();
+    String? savePath = await getPhoneLocalPath();
     String zipName = 'test.zip';
     Dio dio = Dio();
     print("$savePath/$zipName");
@@ -384,7 +388,7 @@ class _DoKitTestPageState extends State<DoKitTestPage> {
   ///获取手机的存储目录路径
   ///getExternalStorageDirectory() 获取的是  android 的外部存储 （External Storage）
   ///  getApplicationDocumentsDirectory 获取的是 ios 的Documents` or `Downloads` 目录
-  Future<String> getPhoneLocalPath() async {
+  Future<String?> getPhoneLocalPath() async {
     final directory = Theme.of(context).platform == TargetPlatform.android
         ? await getExternalStorageDirectory()
         : await getApplicationDocumentsDirectory();
@@ -396,7 +400,7 @@ class _DoKitTestPageState extends State<DoKitTestPage> {
     timer = Timer.periodic(Duration(seconds: 2), (timer) async {
       const MethodChannel _kChannel =
           MethodChannel('plugins.flutter.io/package_info');
-      final Map<String, dynamic> map =
+      final Map<String, dynamic>? map =
           await _kChannel.invokeMapMethod<String, dynamic>('getAll');
     });
   }
@@ -405,7 +409,7 @@ class _DoKitTestPageState extends State<DoKitTestPage> {
     Navigator.of(context, rootNavigator: false).push<void>(MaterialPageRoute(
         builder: (context) {
           //指定跳转的页面
-          return TestPage2();
+          return TestPage();
         },
         settings: RouteSettings(name: 'page1', arguments: ['test', '111'])));
   }
