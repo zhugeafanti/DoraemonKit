@@ -137,7 +137,7 @@ class LeaksDoctorTask extends _Task {
 
         final instanceSet = await VmserviceToolset()
             .getInstances(leakedInstance.classRef!.id!, 300);
-        int? leaksInstanceCounts = instanceSet.totalCount;
+        int? leaksInstanceCounts = instanceSet?.totalCount;
         String? clzName = leakedInstance.classRef!.name;
 
         final stream = Stream.fromIterable(retainObjList)

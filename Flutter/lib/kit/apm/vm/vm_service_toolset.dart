@@ -1,6 +1,7 @@
 // ignore_for_file: omit_local_variable_types
 
 import 'dart:developer';
+import 'dart:io';
 import 'package:vm_service/utils.dart';
 import 'package:vm_service/vm_service.dart';
 import 'package:vm_service/vm_service_io.dart';
@@ -20,7 +21,12 @@ class VmserviceToolset {
   VmserviceToolset._();
 
   // 获取vm service
-  Future<VmService> getVMService() async {
+  Future<VmService?> getVMService() async {
+    // 安卓暂时关闭
+    if (Platform.isAndroid == true) {
+      return null;
+    }
+
     if (_service != null) {
       return _service!;
     }
@@ -34,13 +40,16 @@ class VmserviceToolset {
   }
 
   // VM 这里可获取到hostCPU等信息
-  Future<VM> getVM() async {
-    VmService vmService = await getVMService();
-    return vmService.getVM();
+  Future<VM?> getVM() async {
+    final vmService = await getVMService();
+    return vmService?.getVM();
   }
 
   Future<Isolate?> getMainIsolate() async{
     IsolateRef? ref;
+    final vms = await getVMService();
+    if (vms == null) return null;
+
     final vm = await getVM();
     if (vm == null) return null;
     vm.isolates?.forEach((isolate) {
@@ -48,7 +57,6 @@ class VmserviceToolset {
         ref = isolate;
       }
     });
-    final vms = await getVMService();
     if (ref?.id != null) {
       return vms.getIsolate(ref!.id!);
     }
@@ -81,10 +89,10 @@ class VmserviceToolset {
   // objectId：为其检索实例的类的ID。objectId必须是类的ID，否则将返回RPC错误。
   // limit是要返回的最大实例数。
   // 如果isolateId指已退出的Isolate，则返回收集的哨兵。
-  Future<InstanceSet> getInstances(String objectId, int limit) async {
-    VmService vmService = await getVMService();
+  Future<InstanceSet?> getInstances(String objectId, int limit) async {
+    final vmService = await getVMService();
     final mainIsolate = await getMainIsolate();
-    return vmService.getInstances(mainIsolate!.id!, objectId, limit);
+    return vmService?.getInstances(mainIsolate!.id!, objectId, limit);
   }
 
   // 用于根据对象id从某个对象中查找对象。
@@ -117,7 +125,8 @@ class VmserviceToolset {
   Future<String?> getObjectId(dynamic obj) async {
     final library = await searchLibrary(_vmToolsetLibrary);
     if (library == null || library.id == null) return null;
-    VmService vmService = await getVMService();
+    final vmService = await getVMService();
+    if (vmService == null) return null;
 
     final mainIsolate = await getMainIsolate();
     if (mainIsolate?.id == null) return null;
@@ -147,7 +156,8 @@ class VmserviceToolset {
 
   // 通过Object获取Instance
   Future<Instance?> getInstanceByObject(dynamic obj) async {
-    VmService vmService = await getVMService();
+    final vmService = await getVMService();
+    if (vmService == null) return null;
 
     final mainIsolate = await getMainIsolate();
     if (mainIsolate?.id != null) {
@@ -168,6 +178,7 @@ class VmserviceToolset {
   ///通过ObjectId获取Instance
   Future<Obj?> getObjectInstanceById(String objId) async {
     final vmService = await getVMService();
+    if (vmService == null) return null;
 
     final mainIsolate = await getMainIsolate();
     if (mainIsolate?.id != null) {
@@ -182,7 +193,7 @@ class VmserviceToolset {
   }
 
   Future<RetainingPath?> getRetainingPath(String targetId, int limit) async {
-    VmService vmService = await getVMService();
+    final vmService = await getVMService();
     if (vmService == null) return null;
     final mainIsolate = await getMainIsolate();
     if (mainIsolate != null && mainIsolate.id != null) {
@@ -193,7 +204,10 @@ class VmserviceToolset {
 
   Future<String?> invokeMethod(
       String targetId, String method, List<String> argumentIds) async {
-    VmService vmService = await getVMService();
+    final vmService = await getVMService();
+
+    if (vmService == null) return null;
+    
 
     final mainIsolate = await getMainIsolate();
     if (mainIsolate?.id != null) {
@@ -209,7 +223,8 @@ class VmserviceToolset {
 
   // 强制触发GC
   Future<void> forceGC() async {
-    VmService vmService = await VmserviceToolset().getVMService();
+    final vmService = await VmserviceToolset().getVMService();
+    if (vmService == null) return;
 
     Isolate? isolate = await VmserviceToolset().getMainIsolate();
     if (isolate?.id != null) {
