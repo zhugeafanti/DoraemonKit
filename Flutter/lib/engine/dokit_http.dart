@@ -109,10 +109,13 @@ class DoKitHttpClient implements HttpClient {
       }
     });
     final HttpClientRequest request = await future;
-    httpInfo ??= HttpInfo(request.uri, request.method);
-    final HttpKit? kit = ApmKitManager.instance.getKit(ApmKitName.KIT_HTTP);
-    kit?.save(httpInfo);
-    return DoKitHttpClientRequest(request, httpInfo);
+    if (request !=null) {
+      httpInfo ??= HttpInfo(request.uri, request.method);
+      final HttpKit? kit = ApmKitManager.instance.getKit(ApmKitName.KIT_HTTP);
+      kit?.save(httpInfo);
+      return DoKitHttpClientRequest(request, httpInfo);
+    }
+    return future;
   }
 
   void addRequestBody(HttpClientRequest request) {
