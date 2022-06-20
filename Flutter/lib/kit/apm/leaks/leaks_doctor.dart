@@ -171,7 +171,7 @@ class LeaksDoctor {
         LeaksDoctorConf().savePolicy(className, expectedTotalCount);
       } else {
         VmserviceToolset().getInstanceByObject(obj).then((value) {
-          final clsName = value!.classRef!.name;
+          final clsName = value?.classRef!.name;
           if (clsName != null) {
             LeaksDoctorConf().savePolicy(clsName, expectedTotalCount);
           }

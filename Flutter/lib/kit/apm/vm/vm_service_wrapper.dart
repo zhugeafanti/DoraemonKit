@@ -5,6 +5,8 @@ import 'package:vm_service/utils.dart';
 import 'package:vm_service/vm_service.dart';
 import 'package:vm_service/vm_service_io.dart';
 
+import 'vm_service_toolset.dart';
+
 class VMServiceWrapper {
   VMServiceWrapper._privateConstructor();
 
@@ -22,21 +24,10 @@ class VMServiceWrapper {
   ExtensionService? _extensionService;
   bool connected = false;
 
-  Future<VmService> getService(info) async {
-    Uri uri = convertToWebSocketUrl(serviceProtocolUrl: info.serverUri);
-    return await vmServiceConnectUri(uri.toString(), log: StdoutLog());
-  }
-
   Future<void> connect() async {
-    ServiceProtocolInfo info = await Service.getInfo();
-    if (info.serverUri == null) {
-      print("service  protocol url is null,start vm service fail");
-      return;
-    }
-    service = await getService(info);
-    print('socket connected in service $info');
+    service = await VmserviceToolset().getVMService(); 
     vm = await service?.getVM();
-    List<IsolateRef>? isolates = vm?.isolates;
+    var isolates = vm?.isolates;
     main = isolates?.firstWhere((ref) => ref.name?.contains('main') == true);
     main ??= isolates?.first;
     connected = true;
@@ -47,7 +38,7 @@ class VMServiceWrapper {
       _extensionService = ExtensionService(service!, main!);
       await _extensionService?.loadExtensionService();
     }
-    return _extensionService!.callMethod(method);
+    return _extensionService?.callMethod(method);
   }
 
   gc() {
