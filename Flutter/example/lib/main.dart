@@ -13,7 +13,6 @@ import 'package:dio/dio.dart';
 import 'package:dokit/dokit.dart';
 import 'package:dokit/kit/apm/leaks/leaks_doctor_observer.dart';
 import 'package:dokit/kit/apm/vm/vm_helper.dart';
-import 'package:dokit/kit/biz/biz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -79,12 +78,12 @@ void main() {
       kitBuilder: () => BizKitTestPage());
 
   var bizKit0 = DoKit.i.newBizKit(name: '1111', group: '业务专区2');
-  DoKit.i.addKit(kit: bizKit0!);
+  DoKit.i.addKit(kit: bizKit0);
 
   var bizKit1 = DoKit.i.newBizKit(name: '2222', group: '业务专区3');
   var bizKit2 = DoKit.i.newBizKit(name: '3333', group: '业务专区3');
   var bizKit3 = DoKit.i.newBizKit(name: '4444', group: '业务专区3');
-  DoKit.i.addBizKits([bizKit1!, bizKit2!, bizKit3!]);
+  DoKit.i.addBizKits([bizKit1, bizKit2, bizKit3]);
 
   // DoKit.i.addKit({kit: BizKit(name: '1111', group: '业务专区2')});
 }
@@ -213,12 +212,12 @@ class _DoKitTestPageState extends State<DoKitTestPage> {
                   color: Color(0xffcccccc)),
               margin: EdgeInsets.only(bottom: 30),
               child: TextButton(
+                onPressed: mockHttpPost,
                 child: Text('Mock Http Post',
                     style: TextStyle(
                       color: Color(0xff000000),
                       fontSize: 18,
                     )),
-                onPressed: mockHttpPost,
               ),
             ),
             Container(
@@ -230,12 +229,12 @@ class _DoKitTestPageState extends State<DoKitTestPage> {
                 style: ButtonStyle(
                   padding: MaterialStateProperty.all(EdgeInsets.all(0)),
                 ),
+                onPressed: mockHttpGet,
                 child: Text('Mock Http Get',
                     style: TextStyle(
                       color: Color(0xff000000),
                       fontSize: 18,
                     )),
-                onPressed: mockHttpGet,
               ),
             ),
             Container(
@@ -247,12 +246,12 @@ class _DoKitTestPageState extends State<DoKitTestPage> {
                 style: ButtonStyle(
                   padding: MaterialStateProperty.all(EdgeInsets.all(0)),
                 ),
+                onPressed: testDownload,
                 child: Text('Test Download',
                     style: TextStyle(
                       color: Color(0xff000000),
                       fontSize: 18,
                     )),
-                onPressed: testDownload,
               ),
             ),
             Container(
@@ -328,12 +327,12 @@ class _DoKitTestPageState extends State<DoKitTestPage> {
                 style: ButtonStyle(
                   padding: MaterialStateProperty.all(EdgeInsets.all(0)),
                 ),
+                onPressed: stopAll,
                 child: Text('Stop Timer',
                     style: TextStyle(
                       color: Color(0xff000000),
                       fontSize: 18,
                     )),
-                onPressed: stopAll,
               ),
             ),
             Container(
@@ -345,12 +344,12 @@ class _DoKitTestPageState extends State<DoKitTestPage> {
                 style: ButtonStyle(
                   padding: MaterialStateProperty.all(EdgeInsets.all(0)),
                 ),
+                onPressed: openPage,
                 child: Text('打开新页面',
                     style: TextStyle(
                       color: Color(0xff000000),
                       fontSize: 18,
                     )),
-                onPressed: openPage,
               ),
             ),
           ],
@@ -362,12 +361,12 @@ class _DoKitTestPageState extends State<DoKitTestPage> {
   Timer? timer;
 
   void testDownload() async {
-    String url =
+    var url =
         'https://pt-starfile.didistatic.com/static/starfile/node20210220/895f1e95e30aba5dd56d6f2ccf768b57/GjzGU0Pvv11613804530384.zip';
-    String? savePath = await getPhoneLocalPath();
-    String zipName = 'test.zip';
-    Dio dio = Dio();
-    print("$savePath/$zipName");
+    var savePath = await getPhoneLocalPath();
+    var zipName = 'test.zip';
+    var dio = Dio();
+    print('$savePath/$zipName');
     Response response = await dio.download(url, "$savePath/$zipName",
         onReceiveProgress: (received, total) {
       if (total != -1) {
