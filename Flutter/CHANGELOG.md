@@ -1,3 +1,4 @@
+## [0.8.2-nullsafety.11] - 【Flutter】vm_service版本升级 ^9.4.0
 ## [0.8.2-nullsafety.10] - 增加泄漏检测;第三方依赖升级完全适配空安全
 ## [0.8.1-nullsafety.0] - 支持在主面板添加自定义入口kit;增加悬浮按钮点击事件回调能力
 ## [0.8.0-nullsafety.0] - 支持Flutter2.0，支持nullsafety
