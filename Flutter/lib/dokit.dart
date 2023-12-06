@@ -60,43 +60,44 @@ class DoKit {
       ExceptionCallback? exceptionCallback,
       List<String> methodChannelBlackList = const <String>[],
       Function? releaseAction}) async {
-    // 统计用户信息，便于了解该开源产品的使用量 (请大家放心，我们不用于任何恶意行为)
-    try {
-      upLoadUserInfo();
-    } catch (e) {
-      print('真机可能报异常(可忽略) : upLoadUserInfo ${e.toString()}');
-    }
-
-    assert(
-        app != null || appCreator != null, 'app and appCreator are both null');
-    if (release && !useInRelease) {
-      if (releaseAction != null) {
-        releaseAction.call();
-      } else {
-        if (app != null) {
-          dart.runApp(app.origin);
-        } else {
-          dart.runApp((await appCreator!()).origin);
-        }
-      }
-      return;
-    }
-    blackList = methodChannelBlackList;
-
-    if (useRunZoned != true) {
-      var f = () async => <void>{
-            _ensureDoKitBinding(useInRelease: useInRelease),
-            _runWrapperApp(app != null ? app : await appCreator!()),
-            _zone = Zone.current
-          };
-      await f();
-      return;
-    }
     await runZonedGuarded(
-      () async => <void>{
-        _ensureDoKitBinding(useInRelease: useInRelease),
-        _runWrapperApp(app != null ? app : await appCreator!()),
-        _zone = Zone.current
+      () async {
+        // 统计用户信息，便于了解该开源产品的使用量 (请大家放心，我们不用于任何恶意行为)
+        try {
+          upLoadUserInfo();
+        } catch (e) {
+          print('真机可能报异常(可忽略) : upLoadUserInfo ${e.toString()}');
+        }
+
+        assert(app != null || appCreator != null,
+            'app and appCreator are both null');
+        if (release && !useInRelease) {
+          if (releaseAction != null) {
+            releaseAction.call();
+          } else {
+            if (app != null) {
+              dart.runApp(app.origin);
+            } else {
+              dart.runApp((await appCreator!()).origin);
+            }
+          }
+          return;
+        }
+        blackList = methodChannelBlackList;
+
+        if (useRunZoned != true) {
+          var f = () async => <void>{
+                _ensureDoKitBinding(useInRelease: useInRelease),
+                _runWrapperApp(app != null ? app : await appCreator!()),
+                _zone = Zone.current
+              };
+          await f();
+          return;
+        }
+
+        _ensureDoKitBinding(useInRelease: useInRelease);
+        _runWrapperApp(app ?? await appCreator!());
+        _zone = Zone.current;
       },
       (Object obj, StackTrace stack) {
         _collectError(obj, stack);
