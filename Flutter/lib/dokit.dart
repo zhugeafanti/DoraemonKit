@@ -40,7 +40,7 @@ typedef LogCallback = void Function(String);
 typedef ExceptionCallback = void Function(dynamic, StackTrace);
 
 const String DK_PACKAGE_NAME = 'dokit';
-const String DK_PACKAGE_VERSION = '0.8.0-nullsafety.0';
+const String DK_PACKAGE_VERSION = '0.8.2-nullsafety.12';
 
 //默认release模式不开启该功能
 const bool release = kReleaseMode;
